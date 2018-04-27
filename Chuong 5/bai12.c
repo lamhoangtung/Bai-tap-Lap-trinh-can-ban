@@ -13,11 +13,10 @@ int nhapint(){
 }
 
 void nhapXau(char a[][1000],int n){
-  fflush(stdin);
   for (int i=0;i<n;i++){
     printf("Nhap xau thu %i: ",i+1);
-    fgets(a[i],1000,stdin);
     fflush(stdin);
+    fgets(a[i],1000,stdin);
   }
 }
 
