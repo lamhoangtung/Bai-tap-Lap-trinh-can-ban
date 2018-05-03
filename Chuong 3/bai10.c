@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-int main(void){
-  int temp,a,b;
+int main(){
+  int temp,a=0,b=0;
   do{
     printf("1. Nhap vao hai so nguyen\n");
     printf("2. Tinh tong hai so nguyen vua nhap\n");
@@ -11,7 +11,6 @@ int main(void){
     printf("6. Thoat\n");
     printf("Moi ban nhap lua chon: ");
     scanf("%i",&temp);
-
     switch (temp) {
       case 1: printf("Nhap vao 2 so nguyen: ");
               scanf("%i%i",&a,&b);
@@ -25,6 +24,8 @@ int main(void){
       case 5: printf("Thuong cua 2 so nguyen %i va %i la %f\n",a,b,(float)a/b);
               break;
     }
+    printf("\n");
   }
   while (temp!=6);
+  return 0;
 }

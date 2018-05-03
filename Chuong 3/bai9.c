@@ -9,10 +9,18 @@ int hoanhao(int n){
   else return 1;
 }
 
-int main(void){
-  int n,ans=0;
+int main(){
+  int n;
+  printf("Nhap vao mot so nguyen duong: ");
   scanf("%i",&n);
+  while (n<=0){
+    printf("Du lieu khong hop le, vui long nhap lai mot so nguyen duong: ");
+    scanf("%i",&n);
+  }
+  printf("Cac so hoan hao trong khoang tu 1 den %i la:\n",n);
   for (int i=1;i<=n;i++){
     if (hoanhao(i)==1) printf("%i ",i);
   }
+  printf("\n");
+  return 0;
 }
