@@ -1,8 +1,9 @@
 #include <stdio.h>
 
-int main(void){
+int main(){
   int firstIndex=0,lastIndex=0,counter=0;
   char temp;
+
   do{
     int number;
     printf("Nhap vao mot so nguyen: ");
@@ -13,7 +14,9 @@ int main(void){
         firstIndex=counter;
         lastIndex=counter;
       }
-      else lastIndex=counter;
+      else{
+        lastIndex=counter;
+      }
     }
     printf("Nhap Y de tiep tuc, nhap N de ket thuc: ");
     scanf(" %c",&temp);
@@ -25,5 +28,7 @@ int main(void){
     }
   }
   while (temp=='Y');
-  printf("Vi tri xuat hien lan dau tien va cuoi cung cua so 24 la %i va %i\n",firstIndex,lastIndex);
+
+  printf("Vi tri xuat hien lan dau tien va cuoi cung cua so 24 lan luot la %i va %i\n",firstIndex,lastIndex);
+  return 0;
 }

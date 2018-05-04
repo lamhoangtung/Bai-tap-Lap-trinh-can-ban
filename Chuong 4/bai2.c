@@ -9,15 +9,23 @@ int input(){
 }
 
 int max(int a, int b, int c){
-  if (a>=b&&a>=c) return a;
-  if (b>=a&&b>=c) return b;
-  if (c>=a&&c>=b) return c;
+  if (b>=a&&b>=c){
+    return b;
+  }
+  if (c>=a&&c>=b){
+    return c;
+  }
+  return a;
 }
 
 int min(int a, int b, int c){
-  if (a<=b&&a<=c) return a;
-  if (b<=a&&b<=c) return b;
-  if (c<=a&&c<=b) return c;
+  if (b<=a&&b<=c){
+    return b;
+  }
+  if (c<=a&&c<=b){
+    return c;
+  }
+  return a;
 }
 
 int hieubinhphuong(int a, int b){
@@ -32,8 +40,8 @@ void uocsochung(int a, int b, int c){
   }
   printf("Uoc so chung cua 3 so %i, %i va %i la:\n",a,b,c);
   for (int i=start;i<=end;i++){
-    if (i!=0){
-      if (a%i==0&&b%i==0&&c%i==0) printf("%i ",i);
+    if (i!=0&&a%i==0&&b%i==0&&c%i==0){
+      printf("%i ",i);
     }
   }
 }
@@ -41,6 +49,7 @@ void uocsochung(int a, int b, int c){
 int main(){
   int a=input(),b=input(),c=input();
   int hbp=hieubinhphuong(max(a,b,c),min(a,b,c));
+
   printf("Hieu binh phuong cua max va min la: %i\n",hbp);
   uocsochung(a,b,c);
   printf("\n");

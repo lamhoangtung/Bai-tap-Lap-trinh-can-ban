@@ -5,8 +5,8 @@ float input(){
   float temp;
   printf("Nhap vao so thuc duong: ");
   scanf("%f",&temp);
-  while (temp<0){
-    printf("Du lieu khong thoa man, nhap vao so thuc duong: ");
+  while (temp<=0){
+    printf("Du lieu khong hop le, vui long nhap vao mot so thuc duong: ");
     scanf("%f",&temp);
   }
   return temp;
@@ -26,9 +26,12 @@ void hienthi(float a, float b, float c, float d, float e){
   printf("Chu vi cua tam giac la %f don vi do dai, dien tich cua tam giac la %f don vi dien tich.\n",d,e);
 }
 
-
 int main(){
   float a=input(),b=input(),c=input();
-  hienthi(a,b,c,chuvi(a,b,c),dientich(a,b,c));
+
+  if (a+b>c&&a+c>b&&b+c>a){
+    hienthi(a,b,c,chuvi(a,b,c),dientich(a,b,c));
+  }
+  else printf("Tam giac da nhap khong ton tai.\n");
   return 0;
 }
