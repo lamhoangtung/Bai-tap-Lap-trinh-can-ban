@@ -3,7 +3,9 @@
 
 float nhap(){
   float temp;
+
   scanf("%f",&temp);
+
   return temp;
 }
 
@@ -16,9 +18,14 @@ void hienthi(float f){
 }
 
 int main(){
-  float x=nhap(),y=nhap();
+  printf("Nhap so thuc x: ");
+  float x=nhap();
+  printf("Nhap so thuc y: ");
+  float y=nhap();
+
   double ans=bieuthuc(x,y);
   printf("f(x,y) = ");
   hienthi(ans);
+
   return 0;
 }

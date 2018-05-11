@@ -2,11 +2,14 @@
 
 float nhap(){
   float temp;
+
   scanf("%f",&temp);
+
   while (temp<0){
     printf("Du lieu khong hop le, vui long nhap lai: ");
     scanf("%f",&temp);
   }
+
   return temp;
 }
 
@@ -25,6 +28,8 @@ int main(){
   float l=nhap();
   printf("Nhap dung khang C: ");
   float c=nhap();
+
   hienthi(trokhang(r,l,c));
+  
   return 0;
 }
