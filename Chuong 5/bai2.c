@@ -34,7 +34,7 @@ int main(){
   long long sum=0;
   printf("\n\nCac so hoan hao co trong mang la: \n");
   for (int i=1;i<=n;i++){
-    if (hoanhao(i)==1){
+    if (hoanhao(a[i])==1){
       printf("%i ",a[i]);
       sum+=a[i];
     }
