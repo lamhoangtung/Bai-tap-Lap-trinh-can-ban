@@ -1,15 +1,38 @@
 #include <stdio.h>
 #include <math.h>
 
-/*
 struct contact{
+  char name[30];
   long phone_number;
-  char name[20],add[20],email[30];
-}list;
+  char email[30];
+}temp;
+
+/*
+void addContact(){
+  temp = (struct contact) {"",0,""};
+  printf("\n\t\tAdding a new contact:\n\n");
+  printf("\t\tName: ");
+  scanf(" %[^\n]%*c",temp.name);
+  printf("\t\tPhone number: ");
+  scanf("%ld",&temp.phone_number);
+  printf("\t\tEmail: ");
+  scanf("%s",&temp.email);
+  //database = fopen("database.txt","a");
+  fprintf(database,"%s|%ld|%s\n",temp.name,temp.phone_number,temp.email);
+  printf("\n\t\tAdded %s to the contact book.",temp.name);
+}
 */
 
 int main(){
-  /* ************ Main menu ***********************  */
+  //Init contact book database
+  FILE *database;
+  database = fopen("database.txt","a");
+  if (database==NULL){
+    printf("\t\tWe could not open or create the database! Please try to run the program again.\n\n");
+    return 0;
+  }
+
+  //Main menu
   int choice;
   printf("\n\t **** Welcome to T3-KHMT1-K12 Contact Manager ****");
   while (1){
@@ -22,6 +45,7 @@ int main(){
       printf("\n\n\t\tInvalid number, please enter the choice again: ");
       scanf("%i",&choice);
     }
+
     switch (choice) {
       case 0: printf("\n\n\t\tAre you sure u want to exit? Confirm with Y/N: ");
               char confirm;
@@ -32,10 +56,23 @@ int main(){
               }
               if (confirm=='y'||confirm=='Y'){
                 printf("\n\n\t\tExiting .... Thanks for using our Contact Manager!\n\n");
+                fclose(database);
                 return 0;
               } else break;
-      case 1: //addContact();
+
+      case 1: temp = (struct contact) {"",0,""};
+              printf("\n\t\tAdding a new contact:\n\n");
+              printf("\t\tName: ");
+              scanf(" %[^\n]%*c",temp.name);
+              printf("\t\tPhone number: ");
+              scanf("%ld",&temp.phone_number);
+              printf("\t\tEmail: ");
+              scanf("%s",&temp.email);
+              //database = fopen("database.txt","a");
+              fprintf(database,"%s|%ld|%s\n",temp.name,temp.phone_number,temp.email);
+              printf("\n\t\tAdded %s to the contact book.",temp.name);
               break;
+
       case 2: //listContact();
               break;
       case 3: printf("\n\n\t\tPlease type in something to search: ");
@@ -54,5 +91,6 @@ int main(){
               break;
     }
   }
+  fclose(database);
   return 0;
 }
