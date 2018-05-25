@@ -8,7 +8,10 @@ struct contact{
   char email[30];
 }temp;
 
-int countline(FILE* database){
+FILE *database;
+
+int countline(){
+  database = fopen("database.txt","r");
   int lines=0;
   while (!feof(database)){
     char ch = fgetc(database);
@@ -17,11 +20,12 @@ int countline(FILE* database){
       lines++;
     }
   }
+  fclose(database);
   return lines;
 }
 
-void addContact(FILE *database){
-  //database = fopen("database.txt","a");
+
+void addContact(){
   temp = (struct contact) {"",0,""};
   printf("\n\t\tAdding a new contact:\n\n");
   printf("\t\tName: ");
@@ -30,37 +34,42 @@ void addContact(FILE *database){
   scanf("%ld",&temp.phone_number);
   printf("\t\tEmail: ");
   scanf("%s",&temp.email);
+  database = fopen("database.txt","a");
   fprintf(database,"%s|%ld|%s\n",temp.name,temp.phone_number,temp.email);
+  fclose(database);
   printf("\n\t\tAdded %s to the contact book.",temp.name);
 }
 
-void listContact(FILE *database){
-  //database = fopen("database.txt","r");
-  char savedData[100];
-  int id=0;
-  int lines=countline(database);
-  database = fopen("database.txt","r");
-  while(id<lines){
-    fscanf(database," %[^\n]%*c",savedData);
-    //printf("\t\t%s\n",savedData);
-    int begin=0,end;
-    id++;
-    printf("\t\t%i\t",id);
-    for (int i=0;i<strlen(savedData);i++){
-      if (savedData[i]=='|'){
-        end=i-1;
-        for (int j=begin;j<=end;j++){
-          printf("%c",savedData[j]);
+
+void listContact(){
+  int lines=countline();
+  if (lines==0) printf("\n\t\tThere is no contact to display.");
+  else {
+    char savedData[100];
+    int id=0;
+    printf("\n\t\tThere are %i contacts in the contact book:\n\n",lines);
+    database = fopen("database.txt","r");
+    while(id<lines){
+      fscanf(database," %[^\n]%*c",savedData);
+      //printf("\t\t%s\n",savedData);
+      int begin=0,end;
+      id++;
+      printf("\t\t%i\t",id);
+      for (int i=0;i<strlen(savedData);i++){
+        if (savedData[i]=='|'){
+          end=i-1;
+          for (int j=begin;j<=end;j++){
+            printf("%c",savedData[j]);
+          }
+          begin=i+1;
+          printf("\t\t");
         }
-        begin=i+1;
-        printf("\t\t");
       }
+      end=strlen(savedData)-1;
+      for (int j=begin;j<=end;j++) printf("%c",savedData[j]);
+      printf("\n");
     }
-    end=strlen(savedData)-1;
-    for (int j=begin;j<=end;j++){
-      printf("%c",savedData[j]);
-    }
-    printf("\n");
+    fclose(database);
   }
 }
 
@@ -71,7 +80,7 @@ int main(){
   if (database==NULL){
     printf("\t\tWe could not open or create the database! Please try to run the program again.\n\n");
     return 0;
-  }
+  } else fclose(database);
 
   //Main menu
   int choice;
@@ -92,21 +101,18 @@ int main(){
               char confirm;
               scanf(" %c",&confirm);
               while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
-                printf("\n\n\t\tInvalid Input! Are you sure u want to exit? Confirm with Y/N: ");
                 scanf(" %c",&confirm);
+                printf("\n\n\t\tInvalid Input! Are you sure u want to exit? Confirm with Y/N: ");
               }
               if (confirm=='y'||confirm=='Y'){
                 printf("\n\n\t\tExiting .... Thanks for using our Contact Manager!\n\n");
-                fclose(database);
                 return 0;
               } else break;
 
-      case 1: database = fopen("database.txt","a");
-              addContact(database);
+      case 1: addContact();
               break;
 
-      case 2: database = fopen("database.txt","r");
-              listContact(database);
+      case 2: listContact();
               break;
 
       case 3: printf("\n\n\t\tPlease type in something to search: ");
@@ -125,6 +131,5 @@ int main(){
               break;
     }
   }
-  fclose(database);
   return 0;
 }
