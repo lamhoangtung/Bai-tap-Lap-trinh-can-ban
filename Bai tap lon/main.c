@@ -14,7 +14,7 @@ struct contact{
 
 FILE *database;
 
-int countline(){
+int getNumberofContact(){
   database = fopen("database.txt","r");
   int lines=0;
   while (!feof(database)){
@@ -70,6 +70,13 @@ void printContact(int id, char data[]){
   printf("\n");
 }
 
+/*
+void printContact(int id){
+  struct contact temp = getinfoContact(id);
+  printf("\t\t%s\t\t0%ld\t\t%s\n",temp.name,temp.phone_number,temp.email);
+}
+*/
+
 void addContact(){
   temp = (struct contact) {"",0,""};
   printf("\n\t\tAdding a new contact:\n\n");
@@ -86,13 +93,13 @@ void addContact(){
 }
 
 void listContact(){
-  int lines=countline();
-  if (lines==0) printf("\n\t\tThere is no contact to display.");
-  else {
+  int n=getNumberofContact();
+  if (n==0) printf("\n\t\tThere is no contact to display.");
+  else{
     char savedData[100];
-    printf("\n\t\tThere are %i contacts in the contact book:\n\n",lines);
+    printf("\n\t\tThere are %i contacts in the contact book:\n\n",n);
     database = fopen("database.txt","r");
-    for (int id=1;id<=lines;id++){
+    for (int id=1;id<=n;id++){
       fscanf(database," %[^\n]%*c",savedData);
       //printf("\t\t%s\n",savedData);
       printContact(id,savedData);
@@ -109,9 +116,9 @@ void searchContact(){
     query[i]=tolower(query[i]);
   }
   //printf("%s\n",query);
-  int lines=countline();
+  int n=getNumberofContact();
   database = fopen("database.txt","r");
-  for (int id=1;id<=lines;id++){
+  for (int id=1;id<=n;id++){
     int flag;
     char savedData[100];
     fscanf(database," %[^\n]%*c",savedData);
@@ -129,22 +136,79 @@ void searchContact(){
 
 void editContact(){
   printf("\n\n\t\tPlease type in the ID of the contact that you want to edit: ");
-  int lines;
-  scanf("%i",&lines);
+  int id;
+  scanf("%i",&id);
+  int n=getNumberofContact();
+  if (i<=0||i>n){
+    printf("\n\n\t\tID Invalid. Please double check and try again.");
+  }
+  else{
+    struct contact temp = getinfoContact(id);
+    printf("\n\n\t\tYou are editing %s. Type in the following number to edit:",temp.name);
+    printf("\n\t\t\t[1]: Edit name");
+    printf("\n\t\t\t[2]: Edit phone number");
+    printf("\n\t\t\t[3]: Edit email");
+    printf("\n\t\t\t[0]: Quit");
+    printf("\n\n\t\tEnter the choice: ");
+    scanf("%i",&choice);
+    while (choice<0||choice>3){
+      printf("\n\n\t\tInvalid choice, please enter the choice again: ");
+      scanf("%i",&choice);
+    }
+    int flag=0;
+    char newName[30],newPhonenum[30],newEmail[30];
+    switch(choice){
+      case 0: if (flag==0) printf("\n\n\t\tCanceled. Nothing have changed.");
+              else{
+                printf("\n\n\t\tAre you sure you want to save the change ? Confirm with Y/N: ")
+                char confirm;
+                scanf(" %s",&confirm);
+                while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
+                  printf("\n\n\t\tInvalid Input! Are you sure you want to save the change ? Confirm with Y/N: ");
+                  scanf(" %c",&confirm);
+                }
+                if (confirm=='y'||confirm=='Y'){
+                  if (strlen(newName)!=0) temp.name=newName;
+                  if (strlen(newPhonenum)!=0){
+                    char *trash;
+                    temp.phone_number=strtol(newPhonenum,&trash,10);
+                  }
+                  if (strlen(newEmail)!=0) temp.email=newEmail;
+                }
+                else{
+                  printf("\n\n\t\tCanceled. Nothing have changed.");
+                }
+              }
+
+              break;
+      case 1: printf("\n\n\t\tType in the new name: ");
+              scanf(" %[^\n]%*c",newName);
+              flag++;
+              break;
+      case 2: printf("\n\n\t\tType in the new phone number: ");
+              scanf(" %[^\n]%*c",newPhonenum);
+              flag++;
+              break;
+      case 3: printf("\n\n\t\tType in the new email: ");
+              scanf(" %[^\n]%*c",newEmail);
+              flag++;
+              break;
+    }
+  }
 
 }
 
 void deleteContact(){
   printf("\n\n\t\tPlease type in the ID of the contact that you want to delete: ");
-  int lines;
-  scanf("%i",&lines);
-  struct contact temp = getinfoContact(lines);
+  int id;
+  scanf("%i",&id);
+  struct contact temp = getinfoContact(id);
   printf("\n\n\t\tAre you sure you want to delete %s ? Confirm with Y/N: ",temp.name);
   char confirm;
   scanf(" %c",&confirm);
   while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
-    scanf(" %c",&confirm);
     printf("\n\n\t\tInvalid Input! Are you sure you want to delete %s ? Confirm with Y/N: ",temp.name);
+    scanf(" %c",&confirm);
   }
   if (confirm=='y'||confirm=='Y'){
     database = fopen("database.txt","r");
@@ -159,7 +223,7 @@ void deleteContact(){
     char buffer[BUFFER_SIZE];
     int count = 1;
     while ((fgets(buffer,BUFFER_SIZE,database)) != NULL){
-      if (lines!=count) fputs(buffer,tempFile);
+      if (id!=count) fputs(buffer,tempFile);
       count++;
     }
     fclose(database);
@@ -192,7 +256,7 @@ int main(){
     printf("Enter the choice: ");
     scanf("%i",&choice);
     while (choice<0||choice>5){
-      printf("\n\n\t\tInvalid number, please enter the choice again: ");
+      printf("\n\n\t\tInvalid choice, please enter the choice again: ");
       scanf("%i",&choice);
     }
 
@@ -201,8 +265,8 @@ int main(){
               char confirm;
               scanf(" %c",&confirm);
               while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
-                scanf(" %c",&confirm);
                 printf("\n\n\t\tInvalid Input! Are you sure u want to exit? Confirm with Y/N: ");
+                scanf(" %c",&confirm);
               }
               if (confirm=='y'||confirm=='Y'){
                 printf("\n\n\t\tExiting .... Thanks for using our Contact Manager!\n\n");
