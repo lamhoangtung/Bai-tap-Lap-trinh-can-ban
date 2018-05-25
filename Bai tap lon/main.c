@@ -1,11 +1,24 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 struct contact{
   char name[30];
   long phone_number;
   char email[30];
 }temp;
+
+int countline(FILE* database){
+  int lines=0;
+  while (!feof(database)){
+    char ch = fgetc(database);
+    if(ch == '\n')
+    {
+      lines++;
+    }
+  }
+  return lines;
+}
 
 void addContact(FILE *database){
   //database = fopen("database.txt","a");
@@ -25,7 +38,9 @@ void listContact(FILE *database){
   //database = fopen("database.txt","r");
   char savedData[100];
   int id=0;
-  while(1){
+  int lines=countline(database);
+  database = fopen("database.txt","r");
+  while(id<lines){
     fscanf(database," %[^\n]%*c",savedData);
     //printf("\t\t%s\n",savedData);
     int begin=0,end;
@@ -38,7 +53,7 @@ void listContact(FILE *database){
           printf("%c",savedData[j]);
         }
         begin=i+1;
-        printf("\t");
+        printf("\t\t");
       }
     }
     end=strlen(savedData)-1;
@@ -46,7 +61,6 @@ void listContact(FILE *database){
       printf("%c",savedData[j]);
     }
     printf("\n");
-    if (id==4) break;
   }
 }
 
