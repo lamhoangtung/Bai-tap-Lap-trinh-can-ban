@@ -70,7 +70,33 @@ void printContact(int id, char data[]){
   printf("\n");
 }
 
-void replaceContact(struct contact input, int id)
+void replaceContact(struct contact input, int id){
+  database = fopen("database.txt","r");
+  FILE *tempFile;
+  tempFile = fopen("replaced.tmp","a");
+  if (database == NULL || tempFile == NULL){
+    printf("\t\tWe are unable to open or create the necessary files! Please check you have read/write previleges and try to run the program again.\n\n");
+    fclose(database);
+    fclose(tempFile);
+    exit(EXIT_FAILURE);
+  }
+  for (int i=1;i<id;i++){
+    char temp[100];
+    fscanf(database," %[^\n]%*c",temp);
+    fprintf(tempFile,"%s\n",temp);
+  }
+  fprintf(database,"%s|%ld|%s\n",input.name,input.phone_number,input.email);
+  for (int i=id+1;i<=getNumberofContact();i++){
+    char temp[100];
+    fscanf(database," %[^\n]%*c",temp);
+    fprintf(tempFile,"%s\n",temp);
+  }
+  fclose(database);
+  fclose(tempFile);
+  remove("database.txt");
+  rename("replaced.tmp","database.txt");
+}
+
 /*
 void printContact(int id){
   struct contact temp = getinfoContact(id);
@@ -178,7 +204,7 @@ void editContact(){
                       temp.phone_number=strtol(newPhonenum,&trash,10);
                     }
                     if (strlen(newEmail)!=0) strcpy(temp.email,newEmail);
-                    //replaceContact(temp,id);
+                    replaceContact(temp,id);
                     printf("\n\n\t\tAll changed saved!");
                     run=0;
                   }
