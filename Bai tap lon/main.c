@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <math.h>
+#include <cstdlib>
+#include <cstring>
 
 struct contact{
   char name[30];
@@ -26,25 +28,30 @@ void addContact(){
 void listContact(FILE *database){
   //database = fopen("database.txt","r");
   char savedData[100];
-  fscanf(database," %[^\n]%*c",savedData);
   //printf("\t\t%s\n",savedData);
-  int begin=0,end;
-  for (int i=0;i<strlen(savedData);i++){
-    if (savedData[i]=='|'){
-      end=i-1;
-      for (int j=begin;j<=end;j++){
-        printf("%c",savedData[j]);
+  int id=0;
+  while(1){
+    fscanf(database," %[^\n]%*c",savedData);
+    int begin=0,end;
+    id++;
+    printf("\t\t%i\t",id);
+    for (int i=0;i<strlen(savedData);i++){
+      if (savedData[i]=='|'){
+        end=i-1;
+        for (int j=begin;j<=end;j++){
+          printf("%c",savedData[j]);
+        }
+        begin=i+1;
+        printf("\t");
       }
-      begin=i+1;
-      printf("\t");
     }
+    end=strlen(savedData)-1;
+    for (int j=begin;j<=end;j++){
+      printf("%c",savedData[j]);
+    }
+    printf("\n");
+    if (id==4) break;
   }
-  end=strlen(savedData)-1;
-  for (int j=begin;j<=end;j++){
-    printf("%c",savedData[j]);
-  }
-  printf("\n");
-
 }
 
 int main(){
