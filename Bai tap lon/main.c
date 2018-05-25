@@ -23,6 +23,30 @@ void addContact(){
 }
 */
 
+void listContact(FILE *database){
+  //database = fopen("database.txt","r");
+  char savedData[100];
+  fscanf(database," %[^\n]%*c",savedData);
+  //printf("\t\t%s\n",savedData);
+  int begin=0,end;
+  for (int i=0;i<strlen(savedData);i++){
+    if (savedData[i]=='|'){
+      end=i-1;
+      for (int j=begin;j<=end;j++){
+        printf("%c",savedData[j]);
+      }
+      begin=i+1;
+      printf("\t");
+    }
+  }
+  end=strlen(savedData)-1;
+  for (int j=begin;j<=end;j++){
+    printf("%c",savedData[j]);
+  }
+  printf("\n");
+
+}
+
 int main(){
   //Init contact book database
   FILE *database;
@@ -73,7 +97,8 @@ int main(){
               printf("\n\t\tAdded %s to the contact book.",temp.name);
               break;
 
-      case 2: //listContact();
+      case 2: database = fopen("database.txt","r");
+              listContact(database);
               break;
       case 3: printf("\n\n\t\tPlease type in something to search: ");
               //char query[30];
