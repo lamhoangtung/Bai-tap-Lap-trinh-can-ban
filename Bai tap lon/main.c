@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <math.h>
-#include <cstdlib>
-#include <cstring>
 
 struct contact{
   char name[30];
@@ -9,8 +7,8 @@ struct contact{
   char email[30];
 }temp;
 
-/*
-void addContact(){
+void addContact(FILE *database){
+  //database = fopen("database.txt","a");
   temp = (struct contact) {"",0,""};
   printf("\n\t\tAdding a new contact:\n\n");
   printf("\t\tName: ");
@@ -19,19 +17,17 @@ void addContact(){
   scanf("%ld",&temp.phone_number);
   printf("\t\tEmail: ");
   scanf("%s",&temp.email);
-  //database = fopen("database.txt","a");
   fprintf(database,"%s|%ld|%s\n",temp.name,temp.phone_number,temp.email);
   printf("\n\t\tAdded %s to the contact book.",temp.name);
 }
-*/
 
 void listContact(FILE *database){
   //database = fopen("database.txt","r");
   char savedData[100];
-  //printf("\t\t%s\n",savedData);
   int id=0;
   while(1){
     fscanf(database," %[^\n]%*c",savedData);
+    //printf("\t\t%s\n",savedData);
     int begin=0,end;
     id++;
     printf("\t\t%i\t",id);
@@ -91,22 +87,14 @@ int main(){
                 return 0;
               } else break;
 
-      case 1: temp = (struct contact) {"",0,""};
-              printf("\n\t\tAdding a new contact:\n\n");
-              printf("\t\tName: ");
-              scanf(" %[^\n]%*c",temp.name);
-              printf("\t\tPhone number: ");
-              scanf("%ld",&temp.phone_number);
-              printf("\t\tEmail: ");
-              scanf("%s",&temp.email);
-              //database = fopen("database.txt","a");
-              fprintf(database,"%s|%ld|%s\n",temp.name,temp.phone_number,temp.email);
-              printf("\n\t\tAdded %s to the contact book.",temp.name);
+      case 1: database = fopen("database.txt","a");
+              addContact(database);
               break;
 
       case 2: database = fopen("database.txt","r");
               listContact(database);
               break;
+
       case 3: printf("\n\n\t\tPlease type in something to search: ");
               //char query[30];
               //scanf("%s",&query);
