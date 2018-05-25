@@ -2,6 +2,9 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1000
 
 struct contact{
   char name[30];
@@ -25,19 +28,28 @@ int countline(){
   return lines;
 }
 
-int check_subsequence(char a[], char b[]){
-  int c,d;
-  c=d=0;
-  while (a[c]!='\0'){
-    while ((a[c]!=b[d]) && b[d]!='\0'){
-      d++;
-    }
-    if (b[d]=='\0') break;
-    d++;
-    c++;
+struct contact getinfoContact(int id){
+  struct contact temp = {"",0,""};
+  database = fopen("database.txt","r");
+  char data[100];
+  for (int i=1;i<=id;i++){
+    fscanf(database," %[^\n]%*c",data);
   }
-  if (a[c]=='\0') return 1;
-  else return 0;
+  fclose(database);
+  int i;
+  for (i=0;data[i]!='|';i++){
+    temp.name[i]=data[i];
+  }
+  char phonenum[30];
+  for (int j=0;data[i]!='|';i++,j++){
+    phonenum[j]=data[i];
+  }
+  char *trash;
+  temp.phone_number=strtol(phonenum,&trash,10);
+  for (int j=0;i<strlen(data);i++,j++){
+    temp.email[j]=data[i];
+  }
+  return temp;
 }
 
 void printContact(int id, char data[]){
@@ -112,6 +124,53 @@ void searchContact(){
     //printf("%s\n",preprocessedData);
     if (strstr(preprocessedData,query)!=NULL) printContact(id,savedData);
   }
+  fclose(database);
+}
+
+void editContact(){
+  printf("\n\n\t\tPlease type in the ID of the contact that you want to edit: ");
+  int lines;
+  scanf("%i",&lines);
+
+}
+
+void deleteContact(){
+  printf("\n\n\t\tPlease type in the ID of the contact that you want to delete: ");
+  int lines;
+  scanf("%i",&lines);
+  struct contact temp = getinfoContact(lines);
+  printf("\n\n\t\tAre you sure you want to delete %s ? Confirm with Y/N: ",temp.name);
+  char confirm;
+  scanf(" %c",&confirm);
+  while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
+    scanf(" %c",&confirm);
+    printf("\n\n\t\tInvalid Input! Are you sure you want to delete %s ? Confirm with Y/N: ",temp.name);
+  }
+  if (confirm=='y'||confirm=='Y'){
+    database = fopen("database.txt","r");
+    FILE *tempFile;
+    tempFile = fopen("deleted.tmp","w");
+    if (database == NULL || tempFile == NULL){
+      printf("\t\tWe are unable to open or create the necessary files! Please check you have read/write previleges and try to run the program again.\n\n");
+      fclose(database);
+      fclose(tempFile);
+      exit(EXIT_FAILURE);
+    }
+    char buffer[BUFFER_SIZE];
+    int count = 1;
+    while ((fgets(buffer,BUFFER_SIZE,database)) != NULL){
+      if (lines!=count) fputs(buffer,tempFile);
+      count++;
+    }
+    fclose(database);
+    fclose(tempFile);
+    remove("database.txt");
+    rename("deleted.tmp","database.txt");
+    printf("\n\n\t\tDeleted contact %s",temp.name);
+  }
+  else{
+    printf("\n\n\t\tCanceled. Nothing have changed.");
+  }
 }
 
 int main(){
@@ -119,8 +178,8 @@ int main(){
   FILE *database;
   database = fopen("database.txt","a");
   if (database==NULL){
-    printf("\t\tWe could not open or create the database! Please try to run the program again.\n\n");
-    return 0;
+    printf("\t\tWe are unable to open or create the database! Please check you have read/write previleges and try to run the program again.\n\n");
+    exit(EXIT_FAILURE);
   } else fclose(database);
 
   //Main menu
@@ -128,7 +187,7 @@ int main(){
   printf("\n\t **** Welcome to T3-KHMT1-K12 Contact Manager ****");
   while (1){
     printf("\n\n\n\t\t\tMAIN MENU\n\t\t=====================\n\t\t[1] Add a new");
-    printf(" Contact\n\t\t[2] List all Contacts\n\t\t[3] Search for contact\n\t\t[4] Edit");x
+    printf(" Contact\n\t\t[2] List all Contacts\n\t\t[3] Search for contact\n\t\t[4] Edit");
     printf(" a Contact\n\t\t[5] Delete a Contact\n\t\t[0] Exit\n\t\t=================\n\t\t");
     printf("Enter the choice: ");
     scanf("%i",&choice);
@@ -158,16 +217,11 @@ int main(){
 
       case 3: searchContact();
               break;
-              
-      case 4: printf("\n\n\t\tPlease type in the ID of the contact: ");
-              //int id;
-              //scanf("%i",&id);
-              //editContact(id);
+
+      case 4: editContact();
               break;
-      case 5: printf("\n\n\t\tPlease type in the ID of the contact: ");
-              //int id;
-              //scanf("%i",&id);
-              //editContact(id);
+
+      case 5: deleteContact();
               break;
     }
   }
