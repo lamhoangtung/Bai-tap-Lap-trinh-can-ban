@@ -70,6 +70,7 @@ void printContact(int id, char data[]){
   printf("\n");
 }
 
+void replaceContact(struct contact input, int id)
 /*
 void printContact(int id){
   struct contact temp = getinfoContact(id);
@@ -139,63 +140,69 @@ void editContact(){
   int id;
   scanf("%i",&id);
   int n=getNumberofContact();
-  if (i<=0||i>n){
+  if (id<=0||id>n){
     printf("\n\n\t\tID Invalid. Please double check and try again.");
   }
   else{
     struct contact temp = getinfoContact(id);
-    printf("\n\n\t\tYou are editing %s. Type in the following number to edit:",temp.name);
-    printf("\n\t\t\t[1]: Edit name");
-    printf("\n\t\t\t[2]: Edit phone number");
-    printf("\n\t\t\t[3]: Edit email");
-    printf("\n\t\t\t[0]: Quit");
-    printf("\n\n\t\tEnter the choice: ");
-    scanf("%i",&choice);
-    while (choice<0||choice>3){
-      printf("\n\n\t\tInvalid choice, please enter the choice again: ");
-      scanf("%i",&choice);
-    }
+    int run=1;
     int flag=0;
     char newName[30],newPhonenum[30],newEmail[30];
-    switch(choice){
-      case 0: if (flag==0) printf("\n\n\t\tCanceled. Nothing have changed.");
-              else{
-                printf("\n\n\t\tAre you sure you want to save the change ? Confirm with Y/N: ")
-                char confirm;
-                scanf(" %s",&confirm);
-                while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
-                  printf("\n\n\t\tInvalid Input! Are you sure you want to save the change ? Confirm with Y/N: ");
-                  scanf(" %c",&confirm);
-                }
-                if (confirm=='y'||confirm=='Y'){
-                  if (strlen(newName)!=0) temp.name=newName;
-                  if (strlen(newPhonenum)!=0){
-                    char *trash;
-                    temp.phone_number=strtol(newPhonenum,&trash,10);
-                  }
-                  if (strlen(newEmail)!=0) temp.email=newEmail;
-                }
+    while (run==1){
+      printf("\n\n\t\tYou are editing %s. Type in the following number to edit:",temp.name);
+      printf("\n\n\t\t\t[1]: Edit name");
+      printf("\n\t\t\t[2]: Edit phone number");
+      printf("\n\t\t\t[3]: Edit email");
+      printf("\n\t\t\t[0]: Quit");
+      printf("\n\n\t\tEnter the choice: ");
+      int choice;
+      scanf("%i",&choice);
+      while (choice<0||choice>3){
+        printf("\n\n\t\tInvalid choice, please enter the choice again: ");
+        scanf("%i",&choice);
+      }
+      switch(choice){
+        case 0: if (flag==0) printf("\n\n\t\tCanceled. Nothing have changed.");
                 else{
-                  printf("\n\n\t\tCanceled. Nothing have changed.");
+                  printf("\n\n\t\tAre you sure you want to save the change ? Confirm with Y/N: ");
+                  char confirm;
+                  scanf(" %s",&confirm);
+                  while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
+                    printf("\n\n\t\tInvalid Input! Are you sure you want to save the change ? Confirm with Y/N: ");
+                    scanf(" %c",&confirm);
+                  }
+                  if (confirm=='y'||confirm=='Y'){
+                    if (strlen(newName)!=0) strcpy(temp.name,newName);
+                    if (strlen(newPhonenum)!=0){
+                      char *trash;
+                      temp.phone_number=strtol(newPhonenum,&trash,10);
+                    }
+                    if (strlen(newEmail)!=0) strcpy(temp.email,newEmail);
+                    //replaceContact(temp,id);
+                    printf("\n\n\t\tAll changed saved!");
+                    run=0;
+                  }
+                  else{
+                    printf("\n\n\t\tCanceled. Nothing have changed.");
+                    run=0;
+                  }
                 }
-              }
-
-              break;
-      case 1: printf("\n\n\t\tType in the new name: ");
-              scanf(" %[^\n]%*c",newName);
-              flag++;
-              break;
-      case 2: printf("\n\n\t\tType in the new phone number: ");
-              scanf(" %[^\n]%*c",newPhonenum);
-              flag++;
-              break;
-      case 3: printf("\n\n\t\tType in the new email: ");
-              scanf(" %[^\n]%*c",newEmail);
-              flag++;
-              break;
+                break;
+        case 1: printf("\n\n\t\tType in the new name: ");
+                scanf(" %[^\n]%*c",newName);
+                flag++;
+                break;
+        case 2: printf("\n\n\t\tType in the new phone number: ");
+                scanf(" %[^\n]%*c",newPhonenum);
+                flag++;
+                break;
+        case 3: printf("\n\n\t\tType in the new email: ");
+                scanf(" %[^\n]%*c",newEmail);
+                flag++;
+                break;
+      }
     }
   }
-
 }
 
 void deleteContact(){
