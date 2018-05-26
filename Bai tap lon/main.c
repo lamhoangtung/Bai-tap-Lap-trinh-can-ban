@@ -177,7 +177,7 @@ void replaceContact(struct contact input, int id){
 //Print out the contact given the ID of the contact in the database
 void printContact(int id){
   struct contact temp = getinfoContact(id);
-  printf("\t\t%i\t%s\t\t%s\t\t%s\n",id,temp.name,temp.phone_number,temp.email);
+  printf("\t\t%-10i %-25s %-20s %-20s\n",id,temp.name,temp.phone_number,temp.email);
 }
 
 //Add a new contact to the database with command-line interface
@@ -203,7 +203,7 @@ void listContact(){
   else{
     char savedData[LONG_STRING_SIZE];
     printf("\n\t\tThere are %i contacts in the contact book:\n\n",n);
-
+    printf("\t\t%-10s %-25s %-20s %-20s\n","ID","Name","Phone number","Email");
     for (int id=1;id<=n;id++){
       printContact(id);
     }
@@ -234,8 +234,10 @@ void searchContact(){
     }
     if (strstr(preprocessedData,query)!=NULL){
       flag++;
-      if (flag==1) printf("\n\n\t\tHere is all the contact have found:\n\n");
-      printf("\t");
+      if (flag==1){
+        printf("\n\n\t\tHere is all the contact have found:\n\n");
+        printf("\t\t%-10s %-25s %-20s %-20s\n","ID","Name","Phone number","Email");
+      }
       printContact(id);
     }
   }
