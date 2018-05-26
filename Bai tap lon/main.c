@@ -35,24 +35,24 @@ int getNumberofContact(){
 
 //Standardize name by upper case any first alpha characters
 char* inputName(){
-  static char typed[SHORT_STRING_SIZE];
-  scanf(" %[^\n]%*c",typed);
-  int n=strlen(typed);
+  static char typedName[SHORT_STRING_SIZE];
+  scanf(" %[^\n]%*c",typedName);
+  int n=strlen(typedName);
   for (int i=0;i<n;){
-    if ((typed[i]==' ') && (typed[i+1]==' ')){
+    if ((typedName[i]==' ') && (typedName[i+1]==' ')){
       for (int j=i+1;j<n;j++){
-        typed[j]=typed[j+1];
+        typedName[j]=typedName[j+1];
       }
       n--;
     } else i++;
   }
-  typed[0]=toupper(typed[0]);
-  for (int i=1;i<strlen(typed);i++){
-    if (isalpha(typed[i]) && typed[i-1]==' '){
-      typed[i]=toupper(typed[i]);
-    } else typed[i]=tolower(typed[i]);
+  typedName[0]=toupper(typedName[0]);
+  for (int i=1;i<strlen(typedName);i++){
+    if (isalpha(typedName[i]) && typedName[i-1]==' '){
+      typedName[i]=toupper(typedName[i]);
+    } else typedName[i]=tolower(typedName[i]);
   }
-  return typed;
+  return typedName;
 }
 
 //Check a given string is a phone number or not
@@ -65,24 +65,24 @@ int checkPhoneNum(char *input){
   return 1;
 }
 
-//Return the phone number typed by user
+//Return a phone number typed by user
 char* inputPhoneNum(){
-  static char typed[SHORT_STRING_SIZE];
-  scanf(" %[^\n]%*c",typed);
-  while (checkPhoneNum(typed)==0){
-    printf("\t\tThat's not a phone number. Please type in a phone number: ");
-    scanf(" %[^\n]%*c",typed);
+  static char typedPhoneNum[SHORT_STRING_SIZE];
+  scanf(" %[^\n]%*c",typedPhoneNum);
+  while (checkPhoneNum(typedPhoneNum)==0){
+    printf("\t\tThat's not a phone number. Please type in another phone number: ");
+    scanf(" %[^\n]%*c",typedPhoneNum);
   }
-  int n=strlen(typed);
+  int n=strlen(typedPhoneNum);
   for (int i=0;i<n;){
-    if ((typed[i]==' ') && (typed[i+1]==' ')){
+    if ((typedPhoneNum[i]==' ') && (typedPhoneNum[i+1]==' ')){
       for (int j=i+1;j<n;j++){
-        typed[j]=typed[j+1];
+        typedPhoneNum[j]=typedPhoneNum[j+1];
       }
       n--;
     } else i++;
   }
-  return typed;
+  return typedPhoneNum;
 }
 
 //Check a given string is a email or not
@@ -96,24 +96,49 @@ int checkEmail(char *input){
   else return 0;
 }
 
-//Return the string email typed by user
+//Return a string email typed by user
 char* inputEmail(){
-  static char typed[SHORT_STRING_SIZE];
-  scanf(" %[^\n]%*c",typed);
-  while (checkEmail(typed)==0){
-    printf("\t\tThat's not an email. Please type in an email: ");
-    scanf(" %[^\n]%*c",typed);
+  static char typedEmail[SHORT_STRING_SIZE];
+  scanf(" %[^\n]%*c",typedEmail);
+  while (checkEmail(typedEmail)==0){
+    printf("\t\tThat's not an email. Please type in another email: ");
+    scanf(" %[^\n]%*c",typedEmail);
   }
-  int n=strlen(typed);
+  int n=strlen(typedEmail);
   for (int i=0;i<n;){
-    if ((typed[i]==' ') && (typed[i+1]==' ')){
+    if ((typedEmail[i]==' ') && (typedEmail[i+1]==' ')){
       for (int j=i+1;j<n;j++){
-        typed[j]=typed[j+1];
+        typedEmail[j]=typedEmail[j+1];
       }
       n--;
     } else i++;
   }
-  return typed;
+  return typedEmail;
+}
+
+//Check a given string is a valid ID or not
+int checkID(char *input){
+  for (int i=0;i<strlen(input);i++){
+    if (!isdigit(input[i]) && input[i]!=' '){
+      return 0;
+    }
+  }
+  int id = atoi(input);
+  if (id<=0||id>getNumberofContact()) return 0;
+  else return id;
+}
+
+//Return an ID typed by user
+int inputID(){
+  char typed[SHORT_STRING_SIZE];
+  scanf(" %[^\n]%*c",typed);
+  int flag=checkID(typed);
+  while (flag==0){
+    printf("\t\tID Invalid. Please type in another ID: ");
+    scanf(" %[^\n]%*c",typed);
+    flag=checkID(typed);
+  }
+  return flag;
 }
 
 //Return a struct variable given the ID of the contact inside the database
@@ -152,6 +177,7 @@ void replaceContact(struct contact input, int id){
     exit(EXIT_FAILURE);
   }
   char newData[LONG_STRING_SIZE];
+  strcpy(newData,"");
   strcat(newData,input.name);
   strcat(newData,"|");
   strcat(newData,input.phone_number);
@@ -247,13 +273,7 @@ void searchContact(){
 //Edit contact with command-line interface
 void editContact(){
   printf("\n\n\t\tPlease type in the ID of the contact that you want to edit: ");
-  int id;
-  scanf("%i",&id);
-  int n=getNumberofContact();
-  if (id<=0||id>n){
-    printf("\n\n\t\tID Invalid. Please double check and try again.");
-  }
-  else{
+  int id=inputID();
     struct contact temp = getinfoContact(id);
     int run=1;
     int flagName=0,flagPhonenum=0,flagEmail=0;
@@ -310,7 +330,6 @@ void editContact(){
                 strcpy(newEmail,inputEmail());
                 flagEmail++;
                 break;
-      }
     }
   }
 }
@@ -318,8 +337,7 @@ void editContact(){
 //Delete contact given the the ID of the contact inside the database
 void deleteContact(){
   printf("\n\n\t\tPlease type in the ID of the contact that you want to delete: ");
-  int id;
-  scanf("%i",&id);
+  int id=inputID();
   struct contact temp = getinfoContact(id);
   printf("\n\n\t\tAre you sure you want to delete %s ? Confirm with Y/N: ",temp.name);
   char confirm;
@@ -348,7 +366,7 @@ void deleteContact(){
     fclose(tempFile);
     remove(DATA_BASE_FILE);
     rename("deleted.tmp",DATA_BASE_FILE);
-    printf("\n\n\t\tDeleted %s",temp.name);
+    printf("\n\n\t\tDeleted %s!",temp.name);
   }
   else{
     printf("\n\n\t\tCanceled. Nothing have changed.");
@@ -378,7 +396,7 @@ int main(){
       scanf("%i",&choice);
     }
     switch (choice) {
-      case 0: printf("\n\n\t\tAre you sure u want to exit? Confirm with Y/N: ");
+      case 0: printf("\n\n\t\tAre you sure you want to exit? Confirm with Y/N: ");
               char confirm;
               scanf(" %c",&confirm);
               while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
