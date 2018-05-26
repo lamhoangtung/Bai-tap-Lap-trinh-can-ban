@@ -128,23 +128,31 @@ void searchContact(){
   for (int i=0;i<strlen(query);i++){
     query[i]=tolower(query[i]);
   }
-  //printf("%s\n",query);
+  int flag=0;
   int n=getNumberofContact();
-  database = fopen("database.txt","r");
   for (int id=1;id<=n;id++){
-    int flag;
-    char savedData[100];
-    fscanf(database," %[^\n]%*c",savedData);
-    char preprocessedData[100];
-    for (int i=0;i<strlen(savedData);i++){
-      if (savedData[i]=='|'){
-        preprocessedData[i]=' ';
-      } else preprocessedData[i]=tolower(savedData[i]);
+    struct contact temp1 = getinfoContact(id);
+    char preprocessedData[1000];
+    strcpy(preprocessedData,"");
+    strcat(preprocessedData,temp1.name);
+    strcat(preprocessedData," 0");
+    char newPhonenum[30];
+    sprintf(newPhonenum,"%ld",temp1.phone_number);
+    strcat(preprocessedData,newPhonenum);
+    strcat(preprocessedData," ");
+    strcat(preprocessedData,temp1.email);
+    for (int i=0;i<strlen(preprocessedData);i++){
+      preprocessedData[i]=tolower(preprocessedData[i]);
     }
     //printf("%s\n",preprocessedData);
-    if (strstr(preprocessedData,query)!=NULL) printContact(id);
+    if (strstr(preprocessedData,query)!=NULL){
+      flag++;
+      if (flag==1) printf("\n\n\t\tHere is all the contact have found:\n\n");
+      printf("\t");
+      printContact(id);
+    }
   }
-  fclose(database);
+  if (flag==0) printf("\n\n\t\tNo contact have found!");
 }
 
 void editContact(){
