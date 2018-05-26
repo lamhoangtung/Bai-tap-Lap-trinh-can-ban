@@ -40,34 +40,18 @@ struct contact getinfoContact(int id){
   for (i=0;data[i]!='|';i++){
     temp.name[i]=data[i];
   }
+  i++;
   char phonenum[30];
   for (int j=0;data[i]!='|';i++,j++){
     phonenum[j]=data[i];
   }
   char *trash;
   temp.phone_number=strtol(phonenum,&trash,10);
+  i++;
   for (int j=0;i<strlen(data);i++,j++){
     temp.email[j]=data[i];
   }
   return temp;
-}
-
-void printContact(int id, char data[]){
-  int begin=0,end;
-  printf("\t\t%i\t",id);
-  for (int i=0;i<strlen(data);i++){
-    if (data[i]=='|'){
-      end=i-1;
-      for (int j=begin;j<=end;j++){
-        printf("%c",data[j]);
-      }
-      begin=i+1;
-      printf("\t\t");
-    }
-  }
-  end=strlen(data)-1;
-  for (int j=begin;j<=end;j++) printf("%c",data[j]);
-  printf("\n");
 }
 
 void replaceContact(struct contact input, int id){
@@ -80,16 +64,24 @@ void replaceContact(struct contact input, int id){
     fclose(tempFile);
     exit(EXIT_FAILURE);
   }
-  for (int i=1;i<id;i++){
-    char temp[100];
-    fscanf(database," %[^\n]%*c",temp);
-    fprintf(tempFile,"%s\n",temp);
-  }
-  fprintf(database,"%s|%ld|%s\n",input.name,input.phone_number,input.email);
-  for (int i=id+1;i<=getNumberofContact();i++){
-    char temp[100];
-    fscanf(database," %[^\n]%*c",temp);
-    fprintf(tempFile,"%s\n",temp);
+  char newData[100];
+  strcat(newData,input.name);
+  strcat(newData,"|");
+  char newPhonenum[30];
+  sprintf(newPhonenum,"%ld",input.phone_number);
+  strcat(newData,newPhonenum);
+  strcat(newData,"|");
+  strcat(newData,input.email);
+  strcat(newData,"\n");
+  int count=0;
+  char buffer[BUFFER_SIZE];
+  while ((fgets(buffer,BUFFER_SIZE,database)) != NULL){
+    count++;
+    fflush(stdin);
+    if (count == id){
+      fputs(newData,tempFile);
+    }
+    else fputs(buffer,tempFile);
   }
   fclose(database);
   fclose(tempFile);
@@ -97,12 +89,10 @@ void replaceContact(struct contact input, int id){
   rename("replaced.tmp","database.txt");
 }
 
-/*
 void printContact(int id){
   struct contact temp = getinfoContact(id);
-  printf("\t\t%s\t\t0%ld\t\t%s\n",temp.name,temp.phone_number,temp.email);
+  printf("\t\t%i\t%s\t\t0%ld\t\t%s\n",id,temp.name,temp.phone_number,temp.email);
 }
-*/
 
 void addContact(){
   temp = (struct contact) {"",0,""};
@@ -125,13 +115,9 @@ void listContact(){
   else{
     char savedData[100];
     printf("\n\t\tThere are %i contacts in the contact book:\n\n",n);
-    database = fopen("database.txt","r");
     for (int id=1;id<=n;id++){
-      fscanf(database," %[^\n]%*c",savedData);
-      //printf("\t\t%s\n",savedData);
-      printContact(id,savedData);
+      printContact(id);
     }
-    fclose(database);
   }
 }
 
@@ -156,7 +142,7 @@ void searchContact(){
       } else preprocessedData[i]=tolower(savedData[i]);
     }
     //printf("%s\n",preprocessedData);
-    if (strstr(preprocessedData,query)!=NULL) printContact(id,savedData);
+    if (strstr(preprocessedData,query)!=NULL) printContact(id);
   }
   fclose(database);
 }
@@ -172,7 +158,7 @@ void editContact(){
   else{
     struct contact temp = getinfoContact(id);
     int run=1;
-    int flag=0;
+    int flagName=0,flagPhonenum=0,flagEmail=0;
     char newName[30],newPhonenum[30],newEmail[30];
     while (run==1){
       printf("\n\n\t\tYou are editing %s. Type in the following number to edit:",temp.name);
@@ -188,7 +174,10 @@ void editContact(){
         scanf("%i",&choice);
       }
       switch(choice){
-        case 0: if (flag==0) printf("\n\n\t\tCanceled. Nothing have changed.");
+        case 0: if (flagName==0 && flagPhonenum==0 && flagEmail==0){
+                  printf("\n\n\t\tCanceled. Nothing have changed.");
+                  run=0;
+                }
                 else{
                   printf("\n\n\t\tAre you sure you want to save the change ? Confirm with Y/N: ");
                   char confirm;
@@ -198,12 +187,12 @@ void editContact(){
                     scanf(" %c",&confirm);
                   }
                   if (confirm=='y'||confirm=='Y'){
-                    if (strlen(newName)!=0) strcpy(temp.name,newName);
-                    if (strlen(newPhonenum)!=0){
+                    if (flagName!=0) strcpy(temp.name,newName);
+                    if (flagPhonenum!=0){
                       char *trash;
                       temp.phone_number=strtol(newPhonenum,&trash,10);
                     }
-                    if (strlen(newEmail)!=0) strcpy(temp.email,newEmail);
+                    if (flagEmail!=0) strcpy(temp.email,newEmail);
                     replaceContact(temp,id);
                     printf("\n\n\t\tAll changed saved!");
                     run=0;
@@ -216,15 +205,15 @@ void editContact(){
                 break;
         case 1: printf("\n\n\t\tType in the new name: ");
                 scanf(" %[^\n]%*c",newName);
-                flag++;
+                flagName++;
                 break;
         case 2: printf("\n\n\t\tType in the new phone number: ");
                 scanf(" %[^\n]%*c",newPhonenum);
-                flag++;
+                flagPhonenum++;
                 break;
         case 3: printf("\n\n\t\tType in the new email: ");
                 scanf(" %[^\n]%*c",newEmail);
-                flag++;
+                flagEmail++;
                 break;
       }
     }
@@ -278,7 +267,6 @@ int main(){
     printf("\t\tWe are unable to open or create the database! Please check you have read/write previleges and try to run the program again.\n\n");
     exit(EXIT_FAILURE);
   } else fclose(database);
-
   //Main menu
   int choice;
   printf("\n\t **** Welcome to T3-KHMT1-K12 Contact Manager ****");
