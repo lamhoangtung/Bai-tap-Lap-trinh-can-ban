@@ -1,3 +1,6 @@
+//[LTCB]_<KHMT1-K12>_<Nhom 3>
+//Contact Manager - Phan mem Quan ly Danh ba dien thoai
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -17,6 +20,78 @@ struct contact{
 };
 
 FILE *database;
+
+// All function prototype
+int getNumberofContact();
+char* inputName();
+int checkPhoneNum(char *input);
+char* inputPhoneNum();
+int checkEmail(char *input);
+char* inputEmail();
+int checkID(char *input);
+int inputID();
+struct contact getinfoContact(int id);
+void replaceContact(struct contact input, int id);
+void printContact(int id);
+void addContact();
+void listContact();
+void searchContact();
+void editContact();
+void deleteContact();
+
+int main(){
+  //Init and check contact book database
+  FILE *database;
+  database = fopen(DATA_BASE_FILE,"a");
+  if (database==NULL){
+    printf("\t\tWe are unable to open or create the database! Please check you have read/write previleges and try to run the program again.\n\n");
+    exit(EXIT_FAILURE);
+  } else fclose(database);
+
+  //Main menu interface
+  int choice;
+  printf("\n\t **** Welcome to Team 3 - Computer Science 1 Contact Manager ****");
+  while (1){
+    printf("\n\n\n\t\t\tMAIN MENU\n\t\t=====================\n\t\t");
+    printf("[1] Add a new Contact\n\t\t[2] List all Contacts\n\t\t[3] Search for contact\n\t\t");
+    printf("[4] Edit a Contact\n\t\t[5] Delete a Contact\n\t\t[0] Exit\n\t\t=================\n\t\t");
+    printf("Enter the choice: ");
+    scanf("%i",&choice);
+    while (choice<0||choice>5){
+      printf("\n\n\t\tInvalid choice, please enter the choice again: ");
+      scanf("%i",&choice);
+    }
+    switch (choice) {
+      case 0: printf("\n\n\t\tAre you sure you want to exit? Confirm with Y/N: ");
+              char confirm;
+              scanf(" %c",&confirm);
+              while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
+                printf("\n\n\t\tInvalid Input! Are you sure u want to exit? Confirm with Y/N: ");
+                scanf(" %c",&confirm);
+              }
+              if (confirm=='y'||confirm=='Y'){
+                printf("\n\n\t\tExiting .... Thanks for using our Contact Manager!\n\n");
+                return 0;
+              } else break;
+
+      case 1: addContact();
+              break;
+
+      case 2: listContact();
+              break;
+
+      case 3: searchContact();
+              break;
+
+      case 4: editContact();
+              break;
+
+      case 5: deleteContact();
+              break;
+    }
+  }
+  return 0;
+}
 
 //Return the number of contact stored in the database
 int getNumberofContact(){
@@ -274,62 +349,62 @@ void searchContact(){
 void editContact(){
   printf("\n\n\t\tPlease type in the ID of the contact that you want to edit: ");
   int id=inputID();
-    struct contact temp = getinfoContact(id);
-    int run=1;
-    int flagName=0,flagPhonenum=0,flagEmail=0;
-    char newName[SHORT_STRING_SIZE],newPhonenum[SHORT_STRING_SIZE],newEmail[SHORT_STRING_SIZE];
-    while (run==1){
-      printf("\n\n\t\tYou are editing %s. Type in the following number to edit:",temp.name);
-      printf("\n\n\t\t\t[1]: Edit name");
-      printf("\n\t\t\t[2]: Edit phone number");
-      printf("\n\t\t\t[3]: Edit email");
-      printf("\n\t\t\t[0]: Quit/Save");
-      printf("\n\n\t\tEnter the choice: ");
-      int choice;
+  struct contact temp = getinfoContact(id);
+  int run=1;
+  int flagName=0,flagPhonenum=0,flagEmail=0;
+  char newName[SHORT_STRING_SIZE],newPhonenum[SHORT_STRING_SIZE],newEmail[SHORT_STRING_SIZE];
+  while (run==1){
+    printf("\n\n\t\tYou are editing %s. Type in the following number to edit:",temp.name);
+    printf("\n\n\t\t\t[1]: Edit name");
+    printf("\n\t\t\t[2]: Edit phone number");
+    printf("\n\t\t\t[3]: Edit email");
+    printf("\n\t\t\t[0]: Quit/Save");
+    printf("\n\n\t\tEnter the choice: ");
+    int choice;
+    scanf("%i",&choice);
+    while (choice<0||choice>3){
+      printf("\n\n\t\tInvalid choice, please enter the choice again: ");
       scanf("%i",&choice);
-      while (choice<0||choice>3){
-        printf("\n\n\t\tInvalid choice, please enter the choice again: ");
-        scanf("%i",&choice);
-      }
-      switch(choice){
-        case 0: if (flagName==0 && flagPhonenum==0 && flagEmail==0){
-                  printf("\n\n\t\tCanceled. Nothing have changed.");
+    }
+    switch(choice){
+      case 0: if (flagName==0 && flagPhonenum==0 && flagEmail==0){
+                printf("\n\n\t\tCanceled. Nothing have changed.");
+                run=0;
+              }
+              else{
+                printf("\n\n\t\tAre you sure you want to save the change ? Confirm with Y/N: ");
+                char confirm;
+                scanf(" %s",&confirm);
+                while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
+                  printf("\n\n\t\tInvalid Input! Are you sure you want to save the change ? Confirm with Y/N: ");
+                  scanf(" %c",&confirm);
+                }
+                if (confirm=='y'||confirm=='Y'){
+                  if (flagName!=0) strcpy(temp.name,newName);
+                  if (flagPhonenum!=0) strcpy(temp.phone_number,newPhonenum);
+                  if (flagEmail!=0) strcpy(temp.email,newEmail);
+                  replaceContact(temp,id);
+                  printf("\n\n\t\tAll changed saved!");
                   run=0;
                 }
                 else{
-                  printf("\n\n\t\tAre you sure you want to save the change ? Confirm with Y/N: ");
-                  char confirm;
-                  scanf(" %s",&confirm);
-                  while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
-                    printf("\n\n\t\tInvalid Input! Are you sure you want to save the change ? Confirm with Y/N: ");
-                    scanf(" %c",&confirm);
-                  }
-                  if (confirm=='y'||confirm=='Y'){
-                    if (flagName!=0) strcpy(temp.name,newName);
-                    if (flagPhonenum!=0) strcpy(temp.phone_number,newPhonenum);
-                    if (flagEmail!=0) strcpy(temp.email,newEmail);
-                    replaceContact(temp,id);
-                    printf("\n\n\t\tAll changed saved!");
-                    run=0;
-                  }
-                  else{
-                    printf("\n\n\t\tCanceled. Nothing have changed.");
-                    run=0;
-                  }
+                  printf("\n\n\t\tCanceled. Nothing have changed.");
+                  run=0;
                 }
-                break;
-        case 1: printf("\n\n\t\tType in the new name: ");
-                strcpy(newName,inputName());
-                flagName++;
-                break;
-        case 2: printf("\n\n\t\tType in the new phone number: ");
-                strcpy(newPhonenum,inputPhoneNum());
-                flagPhonenum++;
-                break;
-        case 3: printf("\n\n\t\tType in the new email: ");
-                strcpy(newEmail,inputEmail());
-                flagEmail++;
-                break;
+              }
+              break;
+      case 1: printf("\n\n\t\tType in the new name: ");
+              strcpy(newName,inputName());
+              flagName++;
+              break;
+      case 2: printf("\n\n\t\tType in the new phone number: ");
+              strcpy(newPhonenum,inputPhoneNum());
+              flagPhonenum++;
+              break;
+      case 3: printf("\n\n\t\tType in the new email: ");
+              strcpy(newEmail,inputEmail());
+              flagEmail++;
+              break;
     }
   }
 }
@@ -371,58 +446,4 @@ void deleteContact(){
   else{
     printf("\n\n\t\tCanceled. Nothing have changed.");
   }
-}
-
-int main(){
-  //Init and check contact book database
-  FILE *database;
-  database = fopen(DATA_BASE_FILE,"a");
-  if (database==NULL){
-    printf("\t\tWe are unable to open or create the database! Please check you have read/write previleges and try to run the program again.\n\n");
-    exit(EXIT_FAILURE);
-  } else fclose(database);
-
-  //Main menu interface
-  int choice;
-  printf("\n\t **** Welcome to Team 3 - Computer Science 1 Contact Manager ****");
-  while (1){
-    printf("\n\n\n\t\t\tMAIN MENU\n\t\t=====================\n\t\t");
-    printf("[1] Add a new Contact\n\t\t[2] List all Contacts\n\t\t[3] Search for contact\n\t\t");
-    printf("[4] Edit a Contact\n\t\t[5] Delete a Contact\n\t\t[0] Exit\n\t\t=================\n\t\t");
-    printf("Enter the choice: ");
-    scanf("%i",&choice);
-    while (choice<0||choice>5){
-      printf("\n\n\t\tInvalid choice, please enter the choice again: ");
-      scanf("%i",&choice);
-    }
-    switch (choice) {
-      case 0: printf("\n\n\t\tAre you sure you want to exit? Confirm with Y/N: ");
-              char confirm;
-              scanf(" %c",&confirm);
-              while (confirm!='y' && confirm!='Y' && confirm!='n' && confirm!='N'){
-                printf("\n\n\t\tInvalid Input! Are you sure u want to exit? Confirm with Y/N: ");
-                scanf(" %c",&confirm);
-              }
-              if (confirm=='y'||confirm=='Y'){
-                printf("\n\n\t\tExiting .... Thanks for using our Contact Manager!\n\n");
-                return 0;
-              } else break;
-
-      case 1: addContact();
-              break;
-
-      case 2: listContact();
-              break;
-
-      case 3: searchContact();
-              break;
-
-      case 4: editContact();
-              break;
-
-      case 5: deleteContact();
-              break;
-    }
-  }
-  return 0;
 }
