@@ -302,7 +302,6 @@ void listContact(){
   int n=getNumberofContact();
   if (n==0) printf("\n\t\tThere is no contact to display.");
   else{
-    char savedData[LONG_STRING_SIZE];
     printf("\n\t\tThere are %i contacts in the contact book:\n\n",n);
     printf("\t\t%-10s %-25s %-20s %-20s\n","ID","Name","Phone number","Email");
     for (int id=1;id<=n;id++){
