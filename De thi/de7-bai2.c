@@ -1,12 +1,13 @@
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
 int nhap() {
   int n;
   printf("Nhap so phan tu cua mang (0<n<=30): ");
   scanf("%i", &n);
-  while (n < 0 || n > 30) {
-    printf("Du lieu khong hop le. Vui long nhap so phan tu cua mang (0<n<30): ");
+  while (n <= 0 || n > 30) {
+    printf(
+        "Du lieu khong hop le. Vui long nhap so phan tu cua mang (0<n<30): ");
     scanf("%i", &n);
   }
   return n;
@@ -27,23 +28,25 @@ void xuatMang(int a[], int n) {
   printf("\n");
 }
 
-void tongduong(int a[], int n){
-  int tong=0;
-  for (int i=0;i<n;i++){
-    if (a[i]>3){
-      tong+=a[i];
+void tongduong(int a[], int n) {
+  int tong = 0;
+  for (int i = 0; i < n; i++) {
+    if (a[i] > 3) {
+      tong += a[i];
     }
   }
-  printf("Tong cac phan tu duong lon hon 3 trong mang a la %i.\n",tong);
+  printf("Tong cac phan tu duong lon hon 3 trong mang a la %i.\n", tong);
 }
 
-void amduong(int a[],int n){
-  int am=0,duong=0;
-  for (int i=0;i<n;i++){
-    if (a[i]<0) am++;
-    else duong++;
+void amduong(int a[], int n) {
+  int am = 0, duong = 0;
+  for (int i = 0; i < n; i++) {
+    if (a[i] < 0)
+      am++;
+    else
+      duong++;
   }
-  printf("Mang a co %i phan tu am va %i phan tu duong.\n",am,duong);
+  printf("Mang a co %i phan tu am va %i phan tu duong.\n", am, duong);
 }
 
 int main() {
@@ -51,7 +54,7 @@ int main() {
   int a[n];
   nhapMang(a, n);
   xuatMang(a, n);
-  tongduong(a,n);
-  amduong(a,n);
+  tongduong(a, n);
+  amduong(a, n);
   return 0;
 }
